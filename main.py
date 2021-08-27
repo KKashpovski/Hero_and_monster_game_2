@@ -8,13 +8,11 @@ def start_game():
     """Пока игрок не введет 0, чтобы остановить игру, продолжайте игру."""
     while True:
         # функция - введение в игру и выбор персонажа.
-        choose_hero()
-
-        # функция создает имя персонажа.
-        create_character()
+        ab = Game()
+        ab.choose_hero()
 
         # функция запускает основной игровой цикл.
-        Pits_Of_Inferno_Start_Gameplay(CharacterObject)
+        ab.game_play()
 
         print('\t Хочешь сыграть снова?')
         print('\t Введи [1] --> ДА, погнали!')

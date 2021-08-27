@@ -1,241 +1,197 @@
 """Паттерн проектирования Мост(Bridge) для классификации героев и монстров."""
 
-
 from __future__ import annotations
 from abc import ABC, abstractmethod
-import random
 
 
 class Character:
-    """
-    Класс устанавливает интерфейс для «управляющей» части двух иерархий
-    классов (героев и чудовищ). Она содержит ссылку на объект из иерархии Реализации и делегирует
-    ему всю настоящую работу.
-    """
-    # Класс персонажа как героя, так и врага может быть: Воин/Warrior, Лучник/Archer, Маг/Mage
-
-    def __init__(self, health, sword_attack, bow_attack, magic_attack):
-        """Характеристики персонажа."""
-        # здоровье
+    """Характеристики персонажа. Применительны как к герою,так и к врагу."""
+    def __init__(self, health, sword_attack):
         self.health = health
-        # сила атаки ближнего боя (меч)
-        self.sword = sword_attack
-        # сила атаки лучника (лук)
-        self.bow = bow_attack
-        # сила магической атаки (заклинания)
-        self.magic = magic_attack
+        self.sword_attack = sword_attack
+        self.bow_attack = 0
+        self.magic_attack = 0
 
-    def sethealth(self, health):
-        """Здоровье."""
-        self.health = health
-
-    def setsword(self, sword_attack):
-        """Меч."""
-        self.sword = sword_attack
-
-    def setbow(self, bow_attack):
-        """Лук."""
-        self.bow = bow_attack
-
-    def setmagic(self, magic_attack):
-        """Книга заклинаний."""
-        self.magic = magic_attack
-
-    def gethealth(self):
+    def get_health(self) -> int:
         """Здоровье."""
         return self.health
 
-    def getsword(self):
-        """Меч."""
-        return self.sword
+    def get_sword_attack(self) -> int:
+         """Меч."""
+         return self.sword_attack
 
-    def getbow(self):
-        """Лук."""
-        return self.bow
-
-    def getmagic(self):
-        """Книга заклинаний."""
-        return self.magic
+    def get_bow_attack(self) -> int:
+         """Лук."""
+         return self.bow_attack
+    #
+    def get_magic_attack(self) -> int:
+         """Магия."""
+         return self.magic_attack
+    #
+    def set_health(self, new_health):
+         """Здоровье."""
+         self.health = new_health
+    #
+    def set_sword_attack(self, new_sword_attack):
+         """Меч."""
+         self.sword = new_sword_attack
+    #
+    def set_bow_attack(self, new_bow_attack):
+         """Лук."""
+         self.bow = new_bow_attack
+    #
+    def set_magic_attack(self, new_magic_attack):
+         """Книга заклинаний."""
+         self.magic = new_magic_attack
 
 
 class ExtendedCharacter(Character):
-    """
-    Можно расширить Абстракцию без изменения классов Реализации.
-    """
-    def __init__(self, health, sword_attack, bow_attack, magic_attack):
+    """Расширенные параметры. Применительны к герою."""
+
+    def __init__(self, health, sword_attack):
         """Характеристики персонажа."""
-        super().__init__(health, sword_attack, bow_attack, magic_attack)
-        # колическтво стрел для лука
+        super().__init__(health, sword_attack)
         self.arrow = 0
-        # случайная защита шероя от атак своего класса
-        self.defence = 0
-        # тотем/сохранение игры
         self.totem = 0
-        # количество поверженных монстров
-        self.monster_counter = 0
+        self.enemy_counter = 0
 
-    def setarrow(self, arrow):
-        self.arrow = arrow
+    def get_arrow(self):
+    #     """Стрелы."""
+         return self.arrow
 
-    def setdefence(self, defence):
-        self.arrow = defence
+    def get_totem(self):
+    #     """Тотем."""
+         return self.totem
+    #
+    def get_enemy_counter(self):
+    #     """Количество убитых монстров."""
+         return self.enemy_counter
+    #
+    def set_arrow(self, new_arrow):
+    #     """Стрелы."""
+         self.arrow = new_arrow
+    #
+    def set_totem(self, new_totem):
+    #     """Тотем."""
+         self.totem = new_totem
+    #
+    def set_enemy_counter(self, new_enemy_counter):
+    #     """Количество убитых монстров."""
+         self.enemy_counter = new_enemy_counter
 
-    def settotem(self, totem):
-        self.arrow = totem
 
-    def setmonster_counter(self, monster_counter):
-        self.arrow = monster_counter
-
-    def getarrow(self, arrow):
-        self.arrow = arrow
-
-    def getdefence(self, defence):
-        self.arrow = defence
-
-    def gettotem(self, totem):
-        self.arrow = totem
-
-    def getmonster_counter(self, monster_counter):
-        self.arrow = monster_counter
-
-
-class Hero(Character):
+class Hero(ExtendedCharacter):
     """Характеристики героя."""
-    def paladin(self, health, sword_attack, bow_attack, magic_attack, arrow, defence, totem, monster_counter):
-        setattr(Hero, health, random.randint(8, 20))
-        setattr(Hero, sword_attack, random.randint(5, 20))
-        setattr(Hero, bow_attack, 0)
-        setattr(Hero, magic_attack, 0)
-        setattr(Hero, arrow, 0)
-        setattr(Hero, defence, 0)
-        setattr(Hero, totem, 0)
-        setattr(Hero, monster_counter, 0)
 
-    def ranger(self, health, sword_attack, bow_attack, magic_attack, arrow, defence, totem, monster_counter):
-        setattr(Hero, health, random.randint(8, 20))
-        setattr(Hero, sword_attack, random.randint(5, 12))
-        setattr(Hero, bow_attack, 0)
-        setattr(Hero, magic_attack, 0)
-        setattr(Hero, arrow, 0)
-        setattr(Hero, defence, 0)
-        setattr(Hero, totem, 0)
-        setattr(Hero, monster_counter, 0)
-
-    def sorcerer(self, health, sword_attack, bow_attack, magic_attack, arrow, defence, totem, monster_counter):
-        setattr(Hero, health, random.randint(8, 20))
-        setattr(Hero, sword_attack, random.randint(5, 12))
-        setattr(Hero, bow_attack, 0)
-        setattr(Hero, magic_attack, 0)
-        setattr(Hero, arrow, 0)
-        setattr(Hero, defence, 0)
-        setattr(Hero, totem, 0)
-        setattr(Hero, monster_counter, 0)
+    def data_hero(self):
+        print("\n\tЗдоровье героя = ", self.health,
+              "\n\tСила атаки меча = ", self.sword_attack,
+              "\n\tСила атаки лука = ", self.bow_attack,
+              "\n\tСила магической атаки = ", self.magic_attack,
+              "\n\tКоличество стрел = ", self.arrow,
+              "\n\tНаличие тотема героя = ", self.totem,
+              "\n\tКоличество поверженных монстров = ", self.enemy_counter)
 
 
 class Enemy(Character):
     """Характеристики врага."""
-    def goblin(self, health, sword_attack, bow_attack, magic_attack):
-        setattr(Enemy, health, random.randint(8, 20))
-        setattr(Enemy, sword_attack, random.randint(5, 12))
-        setattr(Enemy, bow_attack, random.randint(5, 12))
-        setattr(Enemy, magic_attack, random.randint(5, 12))
 
-    def dark_elf(self, health, sword_attack, bow_attack, magic_attack):
-        setattr(Enemy, health, random.randint(8, 20))
-        setattr(Enemy, sword_attack, random.randint(5, 12))
-        setattr(Enemy, bow_attack, random.randint(5, 12))
-        setattr(Enemy, magic_attack, random.randint(5, 12))
-
-    def necromancer(self, health, sword_attack, bow_attack, magic_attack):
-        setattr(Enemy, health, random.randint(8, 20))
-        setattr(Enemy, sword_attack, random.randint(5, 12))
-        setattr(Enemy, bow_attack, random.randint(5, 12))
-        setattr(Enemy, magic_attack, random.randint(5, 12))
+    def data_enemy(self):
+        print("\n\tЗдоровье врага = ", self.health,
+              "\n\tСила атаки меча = ", self.sword_attack,
+              "\n\tСила атаки лука = ", self.bow_attack,
+              "\n\tСила магической атаки = ", self.magic_attack)
 
 
 class Attack(ABC):
-    """
-    Реализация устанавливает интерфейс для всех классов реализации. Он не должен
-    соответствовать интерфейсу Абстракции. На практике оба интерфейса могут быть
-    совершенно разными. Как правило, интерфейс Реализации предоставляет только
-    примитивные операции, в то время как Абстракция определяет операции более
-    высокого уровня, основанные на этих примитивах.
-    """
+    """Интерфейс реализации ататки персонажей соответствующего класса."""
+
+    def __init__(self, Character):
+        self.character = Character
 
     @abstractmethod
-    def warrior_attack(self):
+    def hero(self):
         pass
 
-    def archer_attack(self):
-        pass
-
-    def mage_attack(self):
+    def enemy(self):
         pass
 
 
-class WarriorAttack(Attack):
+class Warrior(Hero):
     """Атака ближнего боя для каждого класса персонажей."""
-    def warrior_attack(self):
-        pass
 
-    def archer_attack(self):
-        pass
+    def __init__(self, health, sword_attack):
+        super().__init__(health, sword_attack)
 
-    def mage_attack(self):
-        pass
+    def hero(self):
+        print("\n Ты относишься к классу Warrior и обладаешь следующими характеристиками, Paladin: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack,
+              self.arrow, self.totem, self.enemy_counter)
+
+    def enemy(self):
+        print("\n вой враг Goblin, он относится к классу Warrior и обладает следующими характеристиками: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack)
 
 
-class ArcherAttack(Attack):
+class Archer(Hero):
     """Атака луком для каждого класса персонажей."""
-    def warrior_attack(self):
-        pass
 
-    def archer_attack(self):
-        pass
+    def __init__(self, health, sword_attack):
+        super().__init__(health, sword_attack)
 
-    def mage_attack(self):
-        pass
+    def hero(self):
+        print("\n Ты относишься к классу Archer и обладаешь следующими характеристиками, Ranger: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack,
+              self.arrow, self.totem, self.enemy_counter)
+
+    def enemy(self):
+        print("\n вой враг Dark_Elf, он относится к классу Archer и обладает следующими характеристиками: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack)
 
 
-class MageAttack(Attack):
+class Mage(Hero):
     """Магическая атака боя для каждого класса персонажей."""
-    def warrior_attack(self):
-        pass
 
-    def archer_attack(self):
-        pass
+    def __init__(self, health, sword_attack):
+        super().__init__(health, sword_attack)
 
-    def mage_attack(self):
-        pass
+    def hero(self):
+        print("\n Ты относишься к классу Mage и обладаешь следующими характеристиками, Sorcerer: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack,
+              self.arrow, self.totem, self.enemy_counter)
+
+    def enemy(self):
+        print("\n Твой враг Necromancer, он относится к классу Mage и обладает следующими характеристиками: \n")
+        print(self.health, self.sword_attack, self.bow_attack, self.magic_attack)
 
 
 def client_code(abstraction: Abstraction) -> None:
-    """
-    За исключением этапа инициализации, когда объект Абстракции связывается с
-    определённым объектом Реализации, клиентский код должен зависеть только от
-    класса Абстракции. Таким образом, клиентский код может поддерживать любую
-    комбинацию абстракции и реализации.
-    """
-
-    # ...
-
-    print(abstraction.operation(), end="")
-
-    # ...
-
-
-if __name__ == "__main__":
-    """
-    Клиентский код должен работать с любой предварительно сконфигурированной
-    комбинацией абстракции и реализации.
-    """
-
-    # implementation = ConcreteImplementationA()
-    # abstraction = Abstraction(implementation)
-    # client_code(abstraction)
-    #
-    # print("\n")
-    #
-    # implementation = ConcreteImplementationB()
-    # abstraction = ExtendedAbstraction(implementation)
-    # client_code(abstraction)
+#     """
+#     За исключением этапа инициализации, когда объект Абстракции связывается с
+#     определённым объектом Реализации, клиентский код должен зависеть только от
+#     класса Абстракции. Таким образом, клиентский код может поддерживать любую
+#     комбинацию абстракции и реализации.
+#     """
+#
+#     # ...
+#
+#     print(abstraction.operation(), end="")
+#
+#     # ...
+#
+#
+    if __name__ == "__main__":
+#     """
+#     Клиентский код должен работать с любой предварительно сконфигурированной
+#     комбинацией абстракции и реализации.
+#     """
+#
+        implementation = ConcreteImplementationA()
+        abstraction = Abstraction(implementation)
+        client_code(abstraction)
+#     #
+#     # print("\n")
+#     #
+        implementation = ConcreteImplementationB()
+        abstraction = ExtendedAbstraction(implementation)
+        client_code(abstraction)
