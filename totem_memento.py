@@ -16,19 +16,7 @@ class Originator():
 
     def __init__(self, state: tuple) -> None:
         self._state = state
-        print(f"Создатель: Мое начальное состояние таково: {self._state}")
-
-    # def do_something(self) -> None:
-    #     """Бизнес-логика Создателя может повлиять на его внутреннее состояние.
-    #     Поэтому клиент должен выполнить резервное копирование состояния с
-    #     помощью метода save перед запуском методов бизнес-логики."""
-    #
-    #     print("Создатель: Я делаю что-то важное.")
-    #     self._state = self._generate_random_string(30)
-    #     print(f"Создатель: мое состояние изменилось на: {self._state}")
-    #
-    # def _generate_random_string(self, length: int = 10) -> str:
-    #     return "".join(sample(ascii_letters, length))
+        # print(f"Состояние на момент сохранения таково: {self._state}")
 
     def save(self) -> Memento:
         """Сохраняет текущее состояние внутри снимка."""
@@ -39,7 +27,8 @@ class Originator():
         """Восстанавливает состояние Создателя из объекта снимка."""
 
         self._state = memento.get_state()
-        print(f"Создатель: мое состояние изменилось на: {self._state}")
+        print("О,Боги! ЧУДО! Твой тотем тебя воскресил!!!")
+        # print(f"состояние изменилось на: {self._state}")
 
 
 class Memento(ABC):
@@ -83,7 +72,7 @@ class Caretaker():
         self._originator = originator
 
     def backup(self) -> None:
-        print("\nОпекун: Сохранение состояния создателя...")
+        print("\nСохранение состояния...")
         self._mementos.append(self._originator.save())
 
     def undo(self) -> None:
@@ -91,16 +80,17 @@ class Caretaker():
             return
 
         memento = self._mementos.pop()
-        print(f"Опекун: Восстановление состояния в: {memento.get_name()}")
+        # print(f"Восстановление состояния в: {memento.get_name()}")
         try:
             self._originator.restore(memento)
         except Exception:
             self.undo()
 
     def show_history(self) -> None:
-        print("Опекун: Вот список снимков:")
+        # print("Вот список снимков:")
         for memento in self._mementos:
-            print(memento.get_name())
+            pass
+            # print(memento.get_name())
 
 
 if __name__ == "__main__":

@@ -8,13 +8,14 @@ from classes_bridge import *
 from totem_memento import *
 
 
-class Game(Character):
+class Game(Specificity):
     def __init__(self):
-        self.hero = None
+        self.actor: Hero = None
+        self.monster: Enemy = None
         self.caretaker = None
-        self.enemy = None
+        self.actor_power = None
 
-    def choose_hero(self) -> None:
+    def choose_hero(self) -> Any:
         """Выбор персонажа."""
         print("Добро пожаловать в игру!\n")
         while True:
@@ -29,109 +30,149 @@ class Game(Character):
             else:
                 break
         if option == 1:
-            hero = Warrior(10, 20)
+            actor = Hero(Warrior(), 15)
+            actor.set_sword(14)
+            actor.display_description()
+            time.sleep(.5)
+            self.actor = actor  # Warrior.class_type
+            return self.actor
         elif option == 2:
-            hero = Archer(10, 15)
+            actor = Hero(Archer(), 15)
+            actor.set_sword(10)
+            actor.display_description()
+            time.sleep(.5)
+            self.actor = actor  # Archer.class_type
+            return self.actor
         elif option == 3:
-            hero = Mage(10, 15)
-
-        self.hero = hero
+            actor = Hero(Mage(), 15)
+            actor.set_sword(10)
+            actor.display_description()
+            time.sleep(.5)
+            self.actor = actor  # Mage.class_type
+            return self.actor
 
     def game_play(self) -> None:
         """с помощью этой функции происходит произвольный выбор следующего действия."""
-        if self.hero.enemy_counter == 10:
+        if self.actor.enemy_counter == 5:
             self.game_over(1)
         else:
-            while True:
-                print("\nЧтоб продолжить приключение - введи 1, отказаться - введи 2.")
-                i = int(input())
-                if i == 1:
-                    break
-                elif i == 2:
-                    self.game_over(2)
+            random_g = random.choices([1, 2, 3, 4, 5, 6, 7], weights=[1, 0.2, 0.2, 0.2, 0.2, 0.2, 0.3])[0]
+            if random_g == 1:
+                time.sleep(.5)
+                self.enemy_game()
+            elif random_g == 2:
+                time.sleep(.5)
+                self.sword_attr()
+            elif random_g == 3:
+                time.sleep(.5)
+                self.archer_attr()
+            elif random_g == 4:
+                time.sleep(.5)
+                self.arrow_attr()
+            elif random_g == 5:
+                time.sleep(.5)
+                self.mage_attr()
+            elif random_g == 6:
+                time.sleep(.5)
+                self.totem_attr()
+            elif random_g == 7:
+                time.sleep(.5)
+                self.apple_attr()
+
+    def select_weapon(self) -> Any:
+        while True:
+            print("\nВыбери оружие, которое хочешь использовать для текущей атаки:")
+            print("\t'1' - атака мечом, '2' - атака луком, '3' - магическая атака.")
+            i = int(input())
+            if i == 1:
+                if self.actor.get_sword() != 0:
+                    self.actor_power = self.actor.get_sword()
+                    print("Сила твоей атаки в этом бою = ", self.actor_power)
+                    return self.actor_power
                 else:
-                    print("\nНекорректное значение.")
+                    print("Невозможно воспользовать оружием, которого нет. Выбери что-то из твоего арсенала.")
+                    continue
+            elif i == 2:
+                if self.actor.get_bow() and self.actor.get_arrow() != 0:
+                    self.actor_power = self.actor.get_bow()
+                    print("Сила твоей атаки в этом бою = ", self.actor_power)
+                    return self.actor_power
+                else:
+                    print("Невозможно воспользовать оружием, которого нет. Выбери что-то из твоего арсенала.")
+                    continue
+            elif i == 3:
+                if self.actor.get_magic() != 0:
+                    self.actor_power = self.actor.get_magic()
+                    print("Сила твоей атаки в этом бою = ", self.actor_power)
+                    return self.actor_power
+                else:
+                    print("Невозможно воспользовать оружием, которого нет. Выбери что-то из твоего арсенала.")
+                    continue
+            else:
+                print("Некорректное значение. Введи: '1' - атака мечом, "
+                      "'2' - атака луком, '3' - магическая атака.")
 
-        random_g = random.choices([1, 2, 3, 4, 5, 6, 7], weights=[1, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3])[0]
-        if random_g == 1:
-            self.enemy_game()
-        elif random_g == 2:
-            self.sword_attr()
-        elif random_g == 3:
-            self.archer_attr()
-        elif random_g == 4:
-            self.arrow_attr()
-        elif random_g == 5:
-            self.mage_attr()
-        elif random_g == 6:
-            self.totem_attr()
-        elif random_g == 7:
-            self.apple_attr()
+    def set_defence(self) -> None:
+        """Определение случайной защиты героя от атак своего класса."""
+        if self.actor.get_class_type() == self.monster.get_class_type():
+            print("Давай посмотрим, насколько тебе сопутсвует удача в этом бою?..")
+            print("Нажми enter, чтобы бросить кости...")
+            input()
+            time.sleep(.5)
+            print('Кости брошены...')
+            defence = random.randint(3, 10)
+            print(f"Ты достаешь из-за спины свой щит, который защитит тебя от {defence} из 10 единиц урона.")
+            self.actor.set_defence(defence)
+            aa = self.monster.get_power() - self.actor.get_defence()
+            self.monster.set_power(aa)
 
-    def enemy_game(self) -> None:
+    def enemy_game(self) -> Any:
         """функция описывает действие с монстром."""
         print("\nСтоило тебе сделать пару шагов – из-за угла появляется твой враг!")
         random_m = random.randint(1, 3)
         if random_m == 1:
-            enemy_health = random.randint(1, 10)
-            enemy_attack = random.randint(1, 10)
-            Warrior.enemy(enemy_health, enemy_attack)
+            monster = Enemy(Warrior())
+            monster.display_description()
+            self.monster = monster  # Warrior.class_type
         elif random_m == 2:
-            enemy_health = random.randint(1, 10)
-            enemy_attack = random.randint(1, 10)
-            Archer.enemy(enemy_health, enemy_attack)
+            monster = Enemy(Archer())
+            monster.display_description()
+            self.monster = monster  # Archer.class_type
         elif random_m == 3:
-            enemy_health = random.randint(1, 10)
-            enemy_attack = random.randint(1, 10)
-            Mage.enemy(enemy_health, enemy_attack)
+            monster = Enemy(Mage())
+            monster.display_description()
+            self.monster = monster  # Mage.class_type
 
         while True:
+            self.actor.display_description()
             print("\nХочешь смело подраться с врагом ? – введи 1, хочешь шустро смыться - введи 2")
             i = int(input())
             if i == 1:
-                while True:
-                    print("\nВыбери оружие, которое хочешь использовать для текущей атаки:")
-                    print("\t'1' - атака мечом, '2' - атака луком, '3' - магическая атака.")
-                    i = int(input())
-                    if i == 1:
-                        hero_attack = self.hero.sword_attack
-                        print("Сила твоей атаки в этом бою = ", hero_attack)
-                    elif i == 2:
-                        hero_attack = self.hero.bow_attack
-                        print("Сила твоей атаки в этом бою = ", hero_attack)
-                    elif i == 3:
-                        hero_attack = self.hero.magic_attack
-                        print("Сила твоей атаки в этом бою = ", hero_attack)
-                    else:
-                        print("Некорректное значение. Введи: '1' - атака мечом, "
-                              "'2' - атака луком, '3' - магическая атака.")
-
-                if ((Warrior.hero and Warrior.enemy) or (Archer.hero and Archer.enemy) or (Mage.hero and Mage)):
-                    # Определение случайной защиты героя от атак своего класса
-                    print("Давай посмотрим, насколько тебе сопутсвует удача в этом бою?..")
-                    b = input(print("Нажми enter, чтобы бросить кости..."))
-                    time.sleep(.5)
-                    print('Кости брошены...')
-                    defence = random.randint(3, 10)
-                    print(f"Ты достаешь из-за спины свой щит, который защитит тебя от {defence} из 10 единиц урона.")
-
+                self.select_weapon()
+                self.set_defence()
                 print("Идет битва не на жизнь,а на смерть...")
                 time.sleep(.5)
-                if self.hero.health > enemy_attack:
-                    self.hero.health = self.hero.health - enemy_attack
-                    if hero_attack > enemy_health:
-                        print("Ты безжалостно убиваешь своего врага!!!")
-                        enemy_counter = enemy_counter + 1
+                if self.actor.get_health() > self.monster.get_power():
+                    bb = self.actor.get_health() - self.monster.get_power()
+                    self.actor.set_health(bb)
+                    if self.actor_power > self.monster.get_health():
+                        print("\nТы безжалостно убиваешь своего врага!!!")
+                        self.actor.set_enemy_counter(1)
+                        time.sleep(.5)
                     else:
-                        print("Твой враг оказался достаточно силён, после твоего удара ему удалось убежать.")
-                        print("Ты остался жив, но монстр отнимает у тебя ", enemy_attack, " единиц здоровья", )
+                        print("\nТвой враг оказался достаточно силён, после твоего удара ему удалось убежать.")
+                        print("Ты остался жив, но монстр отнимает у тебя ", self.monster.get_power(),
+                              " единиц здоровья", )
+                        time.sleep(.5)
                 else:
-                    print("Сила атаки врага превосходит твое здоровье, он беспощадно тебя убивает...")
-                    if totem == 1:
+                    print("\nСила атаки врага превосходит твое здоровье, он беспощадно тебя убивает...")
+                    if self.actor.get_totem() == 1:
                         # поднять историю снимка из totem_memento
                         self.caretaker.show_history()
                         # восстановить снимок из totem_memento
                         self.caretaker.undo()
+                        self.actor.set_totem(0)
+                        time.sleep(.5)
                     else:
                         self.game_over(3)
                 break
@@ -140,23 +181,24 @@ class Game(Character):
                 break
             else:
                 print("Некорректное значение. Чтоб продолжить приключение - введи 1, отказаться - введи 2.")
+        self.game_play()
 
     def sword_attr(self) -> None:
         """функция описывает действие с мечом."""
         print("\nНа миг в твоих глазах помутнело от блеска – перед тобой в воздухе парит новый МЕЧ.")
-        if Warrior.hero:
-            a = random.randint(5, 20)
-            Hero.set_sword_attack(self.hero, a)
+        if self.actor.get_class_type() == "Warrior":
+            power = random.randint(10, 18)
         else:
-            a = random.randint(5, 12)
-            Hero.set_sword_attack(self.hero, a)
-        print("Сила атаки этого меча = ", a)
+            power = random.randint(5, 12)
+
+        print("Сила атаки этого меча = ", power)
         print("Чтобы взять меч себе - введи 1, пройти мимо - введи 2")
 
         while True:
             i = int(input())
             if i == 1:
-                print("С новым мечом сила твоей атаки в ближнем бою равна ", Hero.get_sword_attack)
+                self.actor.set_sword(power)
+                print("С новым мечом сила твоей атаки в ближнем бою равна ", self.actor.get_sword())
                 break
             elif i == 2:
                 break
@@ -167,19 +209,18 @@ class Game(Character):
     def archer_attr(self) -> None:
         """функция описывает действие с луком."""
         print("\nНа твоем пути встречается новый ЛУК.")
-        if Archer.hero:
-            a = random.randint(5, 20)
-            Hero.set_bow_attack(self.hero, a)
+        if self.actor.get_class_type() == "Archer":
+            power = random.randint(10, 18)
         else:
-            a = random.randint(5, 12)
-            Hero.set_bow_attack(self.hero, a)
-        print("Сила атаки этого лука = ", a)
+            power = random.randint(5, 12)
+        print("Сила атаки этого лука = ", power)
         print("Чтобы взять лук себе - введи 1, пройти мимо - введи 2")
 
         while True:
             i = int(input())
             if i == 1:
-                print("С новым луком сила твоей атаки лучника равна ", Hero.get_bow_attack())
+                self.actor.set_bow(power)
+                print("С новым луком сила твоей атаки лучника равна ", self.actor.get_bow())
                 break
             elif i == 2:
                 break
@@ -190,14 +231,14 @@ class Game(Character):
     def arrow_attr(self) -> None:
         """функция описывает действие со стрелами для лука."""
         print("\nИдешь дальше... и спотыкаешься о колчан со стрелами.")
-        arrow_count = random.randint(5, 12)
+        arrow_count = random.randint(3, 8)
         print("В колчане ", arrow_count, " стрел для твоего лука")
         print("Чтобы взять колчан себе - введи 1, пройти мимо - введи 2")
 
         while True:
             i = int(input())
             if i == 1:
-                Hero.set_arrow(self.hero, arrow_count)
+                self.actor.set_arrow(arrow_count)
                 print("Теперь ты можешь использовать свой лук в бою.")
                 break
             elif i == 2:
@@ -209,26 +250,23 @@ class Game(Character):
     def mage_attr(self) -> None:
         """функция описывает действие с книгой заклинаний."""
         print("\nУ тебя перед носом из пустоты возникает книга заклинаний.")
-        if Mage.hero:
-            a = random.randint(5, 20)
-            Hero.set_magic_attack(self.hero, a)
+        if self.actor.get_class_type() == "Mage":
+            power = random.randint(10, 18)
         else:
-            a = random.randint(5, 12)
-            Hero.set_magic_attack(self.hero, a)
-        print("Сила магической атаки этой волшебной книги заклинаний = ", a)
+            power = random.randint(5, 12)
+        print("Сила магической атаки этой волшебной книги заклинаний = ", power)
         print("Чтобы взять себе - введи 1, пройти мимо - введи 2")
-        self.game_play()
 
         while True:
             i = int(input())
             if i == 1:
-                print("С новой книгой заклинаний сила твоей магической атаки равна ", Hero.get_magic_attack)
+                self.actor.set_magic(power)
+                print("С новой книгой заклинаний сила твоей магической атаки равна ", self.actor.get_magic())
                 break
             elif i == 2:
                 break
             else:
                 print("Некорректное значение. Чтобы взять себе - введи 1, пройти мимо - введи 2.")
-
         self.game_play()
 
     def totem_attr(self) -> None:
@@ -239,12 +277,14 @@ class Game(Character):
         while True:
             i = int(input())
             if i == 1:
-                Hero.set_totem(self.hero, 1)
-                print("Теперь у тебя есть ", Hero.get_totem(self.hero), " тотем - шанс, в случае гибели,"
-                                                                        " вернуться снова к текущему моменту игры!")
+                self.actor.set_totem(1)
+                print("Теперь у тебя есть ", self.actor.get_totem(), " тотем - шанс, в случае гибели,"
+                                                                     " вернуться снова к текущему моменту игры!")
                 # создание снимка в totem_memento - текущие параметры героя
-                hero_copy = copy.deepcopy(self.hero)
-                originator = Originator(hero_copy)  # в скобки нужно вставить текущие параметры героя
+                aa = (self.actor.get_class_type, self.actor.get_health, self.actor.get_sword, self.actor.get_bow,
+                      self.actor.get_magic, self.actor.get_arrow, self.actor.get_totem, self.actor.get_enemy_counter)
+                hero_copy = copy.deepcopy(aa)
+                originator = Originator(hero_copy)
                 # сохранение состояния снимка в totem_memento
                 self.caretaker = Caretaker(originator)
                 # бэкап снимка в totem_memento
@@ -254,24 +294,28 @@ class Game(Character):
                 break
             else:
                 print("Некорректное значение. Чтобы взять себе - введи 1, пройти мимо - введи 2.")
-            self.game_play()
+        self.game_play()
 
-    # self.game_play убрать и поменять местами 257 и 258
     def apple_attr(self) -> None:
         """функция описывает действие с яблоком."""
         print("\nПо пути ты видишь на полу сочное и спелое яблоко.")
         print("Бежишь к нему, спотыкаясь, чтоб скорее подкрепиться и добавить себе жизненной силы")
-        apple = random.randint(3, 10)
+        apple = random.randint(1, 7)
 
         print("Ты стал мощнее! Сочное яблоко добавляет тебе ", apple, " единиц здоровья")
-        Hero.set_health(self.hero, apple)
+        bb = self.actor.get_health() + apple
+        self.actor.set_health(bb)
+        print("Теперь твое здоровье = ", self.actor.get_health())
         self.game_play()
 
-    def game_over(flag: int) -> int:
+    def game_over(self, flag: int) -> None:
         """функция описывает завершение игры."""
         if flag == 1:
             print("Игра завершена. Ты побил всех монстров. ПОБЕДА!!!")
+            exit()
         elif flag == 2:
             print("Игра завершена!")
+            exit()
         elif flag == 3:
             print("Игра завершена. Ты потерпел ПОРАЖЕНИЕ:( ")
+            exit()
